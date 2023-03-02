@@ -9,7 +9,13 @@ noteForm.addEventListener('submit', e => {
     console.log('Enviado');
     // console.log(title.value, description.value);
 
-    saveNotes(title, description)
+    if (savedId) {
+        updateNotes(saveId, title.value, description.value)
+    } else {
+        saveNotes(title.value, description.value)
+    }
 
+    title.value = ""
+    description.value = ""
 
 })

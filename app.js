@@ -4,7 +4,7 @@ const cookieParser = require('cookie-parser');
 const logger = require('morgan');
 const {v4: uuidv4} = require('uuid');
 
-const notes = []
+let notes = []
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/users');
@@ -33,6 +33,32 @@ io.on('connection', (socket) => {
         
         socket.emit('server:newnote', note)
     })
+
+    socket.on('client:deletenote', (noteId) => {
+        notes=notes.filter((note) => note.id !== noteId)
+        console.log(notes)
+        socket.emit('server:loadnotes', notes)
+        // console.log(id);
+    })
+
+    socket.on('client:getnote', (noteId) => {
+        // console.log(id);
+        const note = notes.find(note => note.id === noteId)
+        console.log(note);
+        socket.emit('server:selectednote',note)
+    })
+
+    socket.on('client:updatenote', (updatedNote) => {
+        notes.map((note) => {
+            if (note.id === updatedNote) {
+                note.title = updatedNote.title
+                note.description = updatedNote.description
+            }
+            return note
+        })
+    })
+
+
 })
 
 app.use('/', indexRouter);
